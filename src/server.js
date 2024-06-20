@@ -31,11 +31,11 @@ const setupServer = () => {
     });
 
 
-    app.get("/api/contacts/:contactId", (req, res) => {
+    app.get("/api/contacts/:contactId", async (req, res) => {
         try {
              const { contactId } = req.params;
 
-        const data = getContactById(contactId);
+        const data = await getContactById(contactId);
 
         if (!data) {
             return res.status(404).json({
