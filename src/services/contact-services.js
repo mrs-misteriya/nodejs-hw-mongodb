@@ -4,20 +4,22 @@ export const getContacts = () => Contact.find();
 
 export const getContactById = (contactId) => Contact.findById(contactId);
 
-export const createContact = async (payload) => {
-   const contact = await Contact.create(payload);
+export const createContact = (data) => {
+   const contact = Contact.create(data);
    return contact;
 };
 
-export const updateContact = async (contactId, payload) => {
-  const rawResult = await Contact.findOneAndUpdate(
-    { _id: contactId },
-    payload);
+export const updateContact = async (contactId, payload, options = {} ) => {
+  const rawResult = await Contact.findOneAndUpdate({ _id: contactId }, payload, {
+    new: true,
+    includeResultMetadata: true,
+    ...options
+  });
 
   if (!rawResult || !rawResult.value) return null;
 
   return {
-    contact: rawResult.value,
+    data: rawResult.value,
     isNew: Boolean(rawResult?.lastErrorObject?.upserted),
   };
 };

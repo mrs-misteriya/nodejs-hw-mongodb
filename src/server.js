@@ -5,8 +5,9 @@ import pino from 'pino-http';
 import { env } from './utils/env.js';
 
 import contactsRouter from './routers/contacts.js';
-import { errorHandler } from './middlewares/errorHandler.js';
+import errorHandler from './middlewares/errorHandler.js';
 import { notFoundHandler } from "./middlewares/NotFoundHandler.js";
+
 
 
 const PORT = Number(env('PORT', '3000'));
@@ -22,11 +23,12 @@ const setupServer = () => {
 
     app.use(logger);
     app.use(cors());
+    app.use(express.json());
 
 
-    app.use(contactsRouter);
+    app.use("/contacts", contactsRouter);
 
-    app.use('*', notFoundHandler);
+    app.use('*', notFoundHandler );
 
     app.use(errorHandler);
 
