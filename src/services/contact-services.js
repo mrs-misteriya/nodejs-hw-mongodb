@@ -1,6 +1,14 @@
 import Contact from "../db/models/Contact.js";
+import calcPaginationData from "../utils/calcPaginationData.js";
 
-export const getContacts = () => Contact.find();
+export const getContacts = async ({ page, perPage, sortBy= 'name', sortOrder= 'asc' }) => {
+  const skip = (page - 1) * perPage;
+  const totalItems = await Contact.countDocuments();
+  const data = await Contact.find().skip(skip).limit(perPage).sort({[sortBy]: sortOrder});
+  const { totalPages, hasPreviousPage, hasNextPage } = calcPaginationData({page, perPage, total: totalItems});
+
+  return { data, page, perPage, totalItems, totalPages, hasPreviousPage, hasNextPage };
+};
 
 export const getContactById = (contactId) => Contact.findById(contactId);
 
@@ -11,7 +19,6 @@ export const createContact = (data) => {
 
 export const updateContact = async (contactId, payload, options = {} ) => {
   const rawResult = await Contact.findOneAndUpdate({ _id: contactId }, payload, {
-    new: true,
     includeResultMetadata: true,
     ...options
   });
